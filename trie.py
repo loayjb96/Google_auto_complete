@@ -51,7 +51,8 @@ class Trie(object):
                 word while traversing the trie
         """
         if node.is_end:
-            self.output.append(node.source)
+            for sentence in node.source:
+                self.output.add(sentence)
 
         for child in node.children.values():
             self.dfs(child, prefix + node.char)
@@ -64,7 +65,7 @@ class Trie(object):
         """
         # Use a variable within the class to keep all possible outputs
         # As there can be more than one word with such prefix
-        self.output = []
+        self.output = set()
 
         node = self.root
 

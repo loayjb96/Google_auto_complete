@@ -2,26 +2,28 @@ import os
 import re
 import pickle as pkl
 from trie import Trie
-from config import Path
-
-suffix_trie = Trie()
+from config import Path,pure_dilemeters
 
 
 def fill_trie():
-    global suffix_trie
-    regex = re.compile("[^a-zA-Z\s]")
+    suf_trie = Trie()
+    regex = re.compile(pure_dilemeters)
     for data, file_name in read_files():
-
         filter_set = set(data.split('\n'))
         for line in filter_set:
             if line == '' or line == ' ':
                 continue
             unfiltered_line = line
             line = regex.sub("", line).strip(' ').lower()
-
             suffix_line = all_complete_suffixes(line)
             for sentence in suffix_line:
-                suffix_trie.insert(sentence, unfiltered_line)
+                suf_trie.insert(sentence, unfiltered_line)
+    return suf_trie
+
+
+def insert_trie_to_pkl():
+    with open('trie_db.pkl', 'wb') as f:
+        pkl.dump(fill_trie(), f)
 
 
 def read_files():
@@ -47,6 +49,6 @@ def all_complete_suffixes(s):
     return list_suffix
 
 
-fill_trie()
+insert_trie_to_pkl()
 
-print(suffix_trie.query('HoW'))
+
