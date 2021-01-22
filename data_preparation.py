@@ -1,67 +1,52 @@
 import os
 import re
-import json
-# files_names = {}
+import pickle as pkl
+from trie import Trie
+from config import Path
+
+suffix_trie = Trie()
 
 
-def fill_trie_base():
-    regex = re.compile('[^a-zA-Z\n\s]')
-    l = []
-    with open("C:/Users/loay-/PycharmProjects/play_ground/files_name.json", "a") as file_names:
-        file_names.write("[")
-    with open("C:/Users/loay-/PycharmProjects/play_ground/Compined_Suffixes.json", "a") as file:
-        file.write("[")
-    for data, name in read_files():
-        index = 0
+def fill_trie():
+    global suffix_trie
+    regex = re.compile("[^a-zA-Z\s]")
+    for data, file_name in read_files():
 
-        for line in data.split('\n'):
-            save_line = line[:]
-            # global files_names
-            if save_line != "|n":
-                with open("C:/Users/loay-/PycharmProjects/play_ground/files_name.json", "a") as file_names:
-                    json.dump({save_line: name}, file_names)
-                    file_names.write(",")
+        filter_set = set(data.split('\n'))
+        for line in filter_set:
+            if line == '' or line == ' ':
+                continue
+            unfiltered_line = line
+            line = regex.sub("", line).strip(' ').lower()
 
-            # files_names[save_line] = name
-            line = regex.sub('', line)
-            line = line.lower()
-            line = line
-            line = line.split(" ")
-            suffixes = all_suffixes(" ".join(line))
-            for i, string in enumerate(suffixes):
-                suffixes[i] = string + "\n"
-            suffixes.append("\n")
-            if save_line != "":
-                l.append({index: suffixes})
-            index += 1
-        with open("C:/Users/loay-/PycharmProjects/play_ground/Compined_Suffixes.json", "a") as file:
-            json.dump({name: l}, file)
-            file.write(",")
-    with open("C:/Users/loay-/PycharmProjects/play_ground/Compined_Suffixes.json", "rb+") as file:
-        file.seek(-1, os.SEEK_END)
-        file.truncate()
-
-    with open("C:/Users/loay-/PycharmProjects/play_ground/Compined_Suffixes.json", "a") as file:
-        file.write("]")
-
-    with open("C:/Users/loay-/PycharmProjects/play_ground/files_name.json", "rb+") as file_names:
-        file_names.seek(-1, os.SEEK_END)
-        file_names.truncate()
-    with open("C:/Users/loay-/PycharmProjects/play_ground/files_name.json", "a") as file_names:
-        file_names.write("]")
+            suffix_line = all_complete_suffixes(line)
+            for sentence in suffix_line:
+                suffix_trie.insert(sentence, unfiltered_line)
 
 
 def read_files():
-    for subdir, dirs, files in os.walk("C:/Users/loay-/Desktop/Google_Progect/small"):
-        for file in files:
-            with open(os.path.join(subdir, file), encoding="utf8") as f:
+    for subdir, dirs, files in os.walk(Path):
+        for file_name in files:
+            with open(os.path.join(subdir, file_name), encoding="utf8") as f:
                 data = f.read()
-                print(os.path.join(subdir, file))
-                yield data, file
+
+                yield data, file_name
 
 
 def all_suffixes(s):
-    return [s[-i:] for i in range(1, len(s)+1,2)]
+    return [s[-i:] for i in range(1, len(s) + 1)]
 
 
-fill_trie_base()
+def all_complete_suffixes(s):
+    list_suffix = []
+    for i in range(len(s) - 1, -1, -1):
+        if s[i] == ' ':
+            list_suffix.append(s[i + 1:])
+
+    list_suffix.append(s)
+    return list_suffix
+
+
+fill_trie()
+
+print(suffix_trie.query('HoW'))

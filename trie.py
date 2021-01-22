@@ -1,12 +1,13 @@
 class TrieNode:
     """A node in the trie structure"""
+
     def __init__(self, char):
         # the character stored in this node
         self.char = char
-        self.source = ""
 
         # whether this can be the end of a word
         self.is_end = False
+        self.source = []
         # a dictionary of child nodes
         # keys are characters, values are nodes
         self.children = {}
@@ -37,11 +38,9 @@ class Trie(object):
                 new_node = TrieNode(char)
                 node.children[char] = new_node
                 node = new_node
-
+        node.source.append(source)
         # Mark the end of a word
-        if word[len(word) - 1] == "\n":
-            node.is_end = True
-        node.source = source
+        node.is_end = True
 
     def dfs(self, node, prefix):
         """Depth-first traversal of the trie
@@ -58,6 +57,7 @@ class Trie(object):
             self.dfs(child, prefix + node.char)
 
     def query(self, x):
+
         """Given an input (a prefix), retrieve all words stored in
         the trie with that prefix, sort the words by the number of
         times they have been inserted
@@ -65,6 +65,7 @@ class Trie(object):
         # Use a variable within the class to keep all possible outputs
         # As there can be more than one word with such prefix
         self.output = []
+
         node = self.root
 
         # Check if the prefix is in the trie
@@ -74,9 +75,8 @@ class Trie(object):
             else:
                 # cannot found the prefix, return empty list
                 return []
-
         # Traverse the trie to get all candidates
         self.dfs(node, x[:-1])
+
         # Sort the results in reverse order and return
-        self.output = list(set(self.output))
-        return sorted(self.output, key=lambda x: x[0], reverse=True)
+        return self.output
