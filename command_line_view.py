@@ -8,4 +8,4 @@ def print_enter_text():
 
 def print_suggestions(sentences):
     for i, val in enumerate(sentences):
-        print(f"{i+1}. {val}")
+        print(f"{i+1}. {val.get_sentence()} , Score {val.get_score()}")
