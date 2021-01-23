@@ -3,7 +3,7 @@
 
 > A simple CLI for text auto completion using Trie Data Structure with cooperation with Google company.
 
-<div align="center"><img src="https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Autocomplete_1.max-1100x1100.png
+<div align="center"><img src="https://drive.google.com/file/d/12tMph6Bx1_ZdBR2ZU246dNjbgZVLwkdK/view?usp=sharing
 " width="400" height="300"/></div>
 
 <br>
